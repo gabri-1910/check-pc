@@ -1,21 +1,23 @@
 import psutil
 import socket
 import csv
-
-def updates():
+from datetime import datetime
 
 # Obtain CPU temperature, memory usage percentage and PC Name
-    cpu_temp = psutil.sensors_temperatures()['coretemp'][0].current
-    mem_usage = psutil.virtual_memory().percent
-    pc_name = socket.getfqdn()
+
+mem_usage = psutil.virtual_memory().percent
+pc_name = socket.getfqdn()
+disk = psutil.disk_usage('/')
+disk_round = round((disk[2] / disk[0]) * 100)
+cpu_usage = psutil.cpu_percent()
+now = datetime.now()
+date = now.strftime("%d/%m/%Y %H:%M:%S")
 
 # Adding the data into a list
-    data = [pc_name, cpu_temp, mem_usage]
+data = [pc_name, disk_round, mem_usage, cpu_usage, date]
 
 # Open a file with the absolute path and writing the data into it
-    file_path = "/Users/username/Documents/my_file.csv"
-    with open(file_path, 'a') as file:
-        writer = csv.writer(file)
-        for row in data:
-            writer.writerow(row)
-
+file_path = (r'\\kyvia\Intalação\testes\updates.csv')
+with open(file_path, 'a') as file:
+    writer = csv.writer(file, delimiter=';')
+    writer.writerow(data)
